@@ -1,6 +1,7 @@
 #Jessica Marshall
 #ECE414 Machine Learning
 #Conjugate Priors Programming Assignment
+#MSE plots
 
 import math
 import numpy as np
@@ -15,14 +16,10 @@ sigma = 10
 variance = sigma**2
 precision = 1/variance
 N = 100        #number of observations
-X_normal = np.random.normal(mu, sigma, N)      #data without noise
-
 mu_noise = 0
 sigma_noise = sigma/2
 variance_noise = sigma_noise**2
-X_awgn = np.random.normal(mu_noise, sigma_noise, N)     #noise
-
-X = X_normal + X_awgn           #a vector of observations as an example/for plotting
+X = np.random.normal(mu + mu_noise, (math.sqrt(variance + variance_noise)), N)
 
 #the conjugate prior of the Gaussian with known variance is a Gaussian
 #define  parameters of initial prior
@@ -31,15 +28,18 @@ sigma_0 = 10        #make this very broad
 precision_0 = 1/(sigma_0**2)
 
 #plot initial prior and likelihood
-#fig1 = plt.figure()
-#ax1 = fig1.add_subplot(1, 1, 1)
-#ax2 = fig1.add_subplot(1, 1, 1)
-#x = np.linspace(mu_0 - 10*sigma_0, mu_0 + 10*sigma_0, N)
-#y1 = norm.pdf(x, loc=(mu + mu_noise), scale=(math.sqrt(variance + variance_noise)))     #loc is mu, scale is std dev
-#y2 = norm.pdf(x, loc=mu_0, scale=sigma_0)       #plot initial prior
-#
-#ax1.plot(x, y1, 'r')
-#ax2.plot(x, y2, 'g')
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(1, 1, 1)
+ax2 = fig1.add_subplot(1, 1, 1)
+x = np.linspace(mu_0 - 10*sigma_0, mu_0 + 10*sigma_0, N)
+y1 = norm.pdf(x, loc=(mu + mu_noise), scale=(math.sqrt(variance + variance_noise)))     #loc is mu, scale is std dev
+y2 = norm.pdf(x, loc=mu_0, scale=sigma_0)       #plot initial prior
+likelihood = ax1.plot(x, y1, 'r', label='Likelihood')
+prior = ax2.plot(x, y2, 'g', label='Prior')
+handles, labels = ax1.get_legend_handles_labels()
+ax1.legend(handles, labels)
+
+#plt.legend(handles=[y1, y2])
 
 #mean squared error of maximum likelihood 
 numIter = 100                   #times we run the estimator (requires new data)
@@ -57,8 +57,10 @@ SE = multiplier*(((ML - mu)**2))
 MSE_ML = np.mean(SE, axis=0)
 
 #plot mean squared error of max likelihood estimate at each observation
+fig2 = plt.figure()
 x = np.linspace(1, N, N)
-plt.plot(x, MSE_ML)
+ax1 = fig2.add_subplot(1, 1, 1)
+ax1.plot(x, MSE_ML)
 
 #update equations for Gaussian
 paramList = np.zeros((2, N))   #first row is mu, second row is sigma, use these to plot later
