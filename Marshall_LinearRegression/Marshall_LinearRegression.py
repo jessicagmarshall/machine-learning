@@ -27,16 +27,25 @@ tn = tn_synthetic + noise          #add noise to syntheticc data
 #take the targets one by one to determine mus and covariances of the w's (estimates for a0 & a1)
 #define the prior mus and covariances assuming 0 mean unit variance
 #no need because the update equations take this into account
-#mu_0 = 0
-#cov_0 = (alpha) * np.identity(2)
+mu_0 = [0, 0]
+cov_0 = (alpha) * np.identity(2)
 
 ##########################################
 #update the prior for each new observation
-#muN = mu_0
-#SN = cov_0
+muN = mu_0
+SN = cov_0
+
 plot_vals = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 25, 50, N-1]
 x, y = np.mgrid[-1:1:.01, -1:1:.01]
 pos = np.dstack((x, y))
+
+rv = multivariate_normal(muN, SN)
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(111)
+ax1.set_xlabel('w0 value = -0.3')
+ax1.set_ylabel('w0 value = 0.5')
+ax1.set_title('Contour plot of original weight estimates', fontweight='bold')
+ax1.contourf(x, y, rv.pdf(pos))
 
 iota = np.array([[1 , xn[0]]])       #basis functions are 1 and x
 for i in range(N):
