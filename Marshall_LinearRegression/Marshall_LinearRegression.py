@@ -52,6 +52,8 @@ for i in range(N):
         rv = multivariate_normal(muN, SN)
         fig2 = plt.figure()
         ax2 = fig2.add_subplot(111)
+        ax2.set_xlabel('w0 value = -0.3')
+        ax2.set_ylabel('w0 value = 0.5')
         ax2.set_title('Contour plot of weight estimates at observation ' + str(i + 1), fontweight='bold')
         ax2.contourf(x, y, rv.pdf(pos))
 
