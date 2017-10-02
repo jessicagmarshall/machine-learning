@@ -34,7 +34,7 @@ tn = tn_synthetic + noise          #add noise to syntheticc data
 #update the prior for each new observation
 #muN = mu_0
 #SN = cov_0
-plot_vals = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 25, 50, N]
+plot_vals = [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 25, 50, N-1]
 x, y = np.mgrid[-1:1:.01, -1:1:.01]
 pos = np.dstack((x, y))
 
@@ -52,6 +52,7 @@ for i in range(N):
         rv = multivariate_normal(muN, SN)
         fig2 = plt.figure()
         ax2 = fig2.add_subplot(111)
+        ax2.set_title('Contour plot of weight estimates at observation ' + str(i + 1), fontweight='bold')
         ax2.contourf(x, y, rv.pdf(pos))
 
 
