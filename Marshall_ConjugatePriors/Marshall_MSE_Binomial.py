@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 #here we assume the probability p is the unknown parameter
 #this is the likelihood function in Baye's rule
 p = 0.7
-N = 100        #number of observations
+N = 1000        #number of observations
 n = 10
 X_binom = np.random.binomial(n, p, size=N)      #data without noise
 
