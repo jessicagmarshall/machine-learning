@@ -35,22 +35,31 @@ s = 0.1                         #define s in each Gaussian basis function as 0.1
 #unit mean, alpha * identity covariance assumption
 #iota where N = 0 is a 1x9 matrix (1 observation by 9 basis functions)
 
+
 x_temp = np.ones(9) * xn[0]
-iota = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
-iotaT = iota.T
-SN_inv = alpha*np.identity(9) + beta_noise * iotaT.dot(iota)
-SN = SN_inv.T
-mN = beta_noise * SN.dot(iotaT).dot(tn[1])
+iota = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])      #basis functions are 9 Gaussians
+for i in range(N[3]):
+    x_temp = np.ones(9) * xn[i]
+    iotanew = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
+    if not np.array_equal(iota, iotanew):
+        iota = np.concatenate((iota, iotanew), axis=0)      #add row to iota
+    iotaT = iota.T
+    SN_inv = (alpha * np.identity(9)) + (beta_noise * iotaT.dot(iota))
+    SN = np.linalg.inv(SN_inv)
+    tn_N = tn[0:i+1].T
+    mN = beta_noise * SN.dot(iotaT).dot(tn_N)
+    
+    #plot estimate
+    muN = np.zeros(100)
+    for i in range(len(xtruth)):
+        x_temp = np.ones(9) * xtruth[i]
+        phi = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
+        muN[i] = np.dot(mN.T.flatten(), phi.flatten())
+    fig2 = plt.figure()
+    ax2 = fig2.add_subplot(111)
+    ax2.plot(xtruth, muN)
+    ax2.plot(xtruth, ytruth, 'g')
 
 
-muN = np.zeros(100)
-for i in range(len(xtruth)):
-    x_temp = np.ones(9) * xtruth[i]
-    phi = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
-    muN[i] = np.dot(mN.T.flatten(), phi.flatten())
-
-fig2 = plt.figure()
-ax2 = fig2.add_subplot(111)
-ax2.plot(xtruth, muN)
 
 
