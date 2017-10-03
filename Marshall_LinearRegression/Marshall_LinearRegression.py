@@ -47,6 +47,21 @@ ax1.set_title('Contour plot of original weight estimates', fontweight='bold')
 ax1.contourf(x, y, rv.pdf(pos))
 ax1.set_aspect('equal')
 
+x_ds = np.random.multivariate_normal(muN, SN, 10)
+y_ds = np.zeros((10, 100))
+xtruth = np.linspace(-1, 1, 100)
+for l in range(10):
+    y_ds[l] = x_ds[l, 0] + xtruth*x_ds[l, 1]
+fig4 = plt.figure()
+ax4 = fig4.add_subplot(111)
+ax4.set_xlabel('w0 value = -0.3')
+ax4.set_ylabel('w1 value = 0.5')
+ax4.set_title('Data space to start', fontweight='bold')
+ax4.set_aspect('equal')
+for m in range(y_ds.shape[0]):
+    ax4.plot(xtruth, y_ds[m,:])
+
+
 iota = np.array([[1 , xn[0]]])      #basis functions are 1 and x
 for i in range(N):
     iotanew = np.array([[1, xn[i]]])
@@ -87,5 +102,17 @@ for i in range(N):
         ax2.set_title('Contour plot of weight estimates at observation ' + str(i + 1), fontweight='bold')
         ax2.contourf(x, y, rv.pdf(pos))
         ax2.set_aspect('equal')
-
+        
+        #plot data space by drawing random samples from bivariate normal
+        x_ds = np.random.multivariate_normal(muN, SN, 10)
+        x = np.linspace(-1, 1, 100)
+        for l in range(10):
+            y_ds = x_ds[l, 0] + x*x_ds[l, 1]
+        fig4 = plt.figure()
+        ax4 = fig4.add_subplot(111)
+        ax4.set_xlabel('w0 value = -0.3')
+        ax4.set_ylabel('w1 value = 0.5')
+        ax4.set_title('Data space ' + str(l + 1), fontweight='bold')
+        ax4.plt()
+        
 
