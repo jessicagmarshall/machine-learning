@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 ##########################################
 #constants
-N = [1, 2, 4, 25]
+N = [0, 1, 3, 24]
 beta_noise = 25                     #defined by the book
 alpha = 2.0                         #defined by the book
 
@@ -19,12 +19,13 @@ xtruth = np.linspace(0, 1, 100)
 ytruth = np.sin(2*np.pi*xtruth)
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
+ax1.set_title('Ground Truth', fontweight='bold')
 ax1.plot(xtruth, ytruth, 'g')
 
 #generate data
-xn = np.random.uniform(0, 1, N[3])
+xn = np.random.uniform(0, 1, N[3] + 1)
 t_synthetic = np.sin(2*np.pi*xn)
-noise = np.random.normal(0, 0.15, N[3])
+noise = np.random.normal(0, 0.15, N[3] + 1)
 tn = t_synthetic + noise
 #plt.scatter(xn, yn)
 
@@ -38,7 +39,7 @@ s = 0.1                         #define s in each Gaussian basis function as 0.1
 
 x_temp = np.ones(9) * xn[0]
 iota = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])      #basis functions are 9 Gaussians
-for i in range(N[3]):
+for i in range(N[3] + 1):
     x_temp = np.ones(9) * xn[i]
     iotanew = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
     if not np.array_equal(iota, iotanew):
@@ -51,14 +52,17 @@ for i in range(N[3]):
     
     #plot estimate
     muN = np.zeros(100)
-    for i in range(len(xtruth)):
-        x_temp = np.ones(9) * xtruth[i]
+    for j in range(len(xtruth)):
+        x_temp = np.ones(9) * xtruth[j]
         phi = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
-        muN[i] = np.dot(mN.T.flatten(), phi.flatten())
-    fig2 = plt.figure()
-    ax2 = fig2.add_subplot(111)
-    ax2.plot(xtruth, muN)
-    ax2.plot(xtruth, ytruth, 'g')
+        muN[j] = np.dot(mN.T.flatten(), phi.flatten())
+    if i in N:
+        fig2 = plt.figure()
+        ax2 = fig2.add_subplot(111)
+        ax2.set_title('Estimate on observation ' + str(i+1), fontweight='bold')
+        ax2.plot(xtruth, muN)
+        ax2.plot(xtruth, ytruth, 'g')
+        ax2.plot(xn[0:i+1], tn[0:i+1], 'ro')
 
 
 
