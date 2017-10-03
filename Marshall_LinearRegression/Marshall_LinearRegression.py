@@ -34,7 +34,7 @@ cov_0 = (1/alpha) * np.identity(2)
 muN = mu_0
 SN = cov_0
 
-plot_vals = [0, 1, 2, 3]
+plot_vals = [0, 1, 2, 3, 5, 10, N-1]
 x, y = np.mgrid[-1:1.1:.01, -1:1.1:.01]
 pos = np.dstack((x, y))
 
@@ -59,6 +59,7 @@ for i in range(N):
     muN = beta_noise * SN.dot(iotaT).dot(tn_N)
     
     if i in plot_vals:
+        
         #plot likelihood
         fig3 = plt.figure()
         ax3 = fig3.add_subplot(111)
@@ -71,8 +72,12 @@ for i in range(N):
                 w1 = x1[k]
                 mu = w0 + (w1*xn[i])
                 surface[j, k] = norm(mu, 1/beta_noise).pdf(tn[i])
+        ax3.set_xlabel('w0 value = -0.3')
+        ax3.set_ylabel('w1 value = 0.5')
+        ax3.set_title('Heat map of likelihood for observation ' + str(i + 1), fontweight='bold')
         ax3.imshow(surface, cmap='afmhot', interpolation='nearest', extent=[-1,1,-1,1])
         ax3.set_aspect('equal')
+        
         #plot prior/posterior
         fig2 = plt.figure()
         rv = multivariate_normal(muN, SN)
