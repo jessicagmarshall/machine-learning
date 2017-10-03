@@ -52,10 +52,12 @@ for i in range(max(N) + 1):
     
     #plot estimate
     muN = np.zeros(100)
+    SN_x = np.zeros(100)
     for j in range(len(xtruth)):
         x_temp = np.ones(9) * xtruth[j]
         phi = np.array([np.exp(-np.multiply(x_temp - mu, x_temp - mu)/(2*s*s))])
         muN[j] = np.dot(mN.T.flatten(), phi.flatten())
+        SN_x[j] = (1/beta_noise) + np.dot(np.dot(phi, SN), phi.T)
     if i in N:
         fig2 = plt.figure()
         ax2 = fig2.add_subplot(111)
@@ -63,6 +65,9 @@ for i in range(max(N) + 1):
         ax2.plot(xtruth, muN)
         ax2.plot(xtruth, ytruth, 'g')
         ax2.plot(xn[0:i+1], tn[0:i+1], 'r+')
+        ax2.fill_between(xtruth, muN + SN_x, muN - SN_x, facecolor='red', alpha=.125)
+        ax2.plot(xtruth, muN + SN_x, 'r', alpha=.5)
+        ax2.plot(xtruth, muN - SN_x, 'r', alpha=.5)
 
 
 

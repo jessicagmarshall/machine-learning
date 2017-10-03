@@ -115,5 +115,5 @@ for i in range(N):
         ax5.set_title('Data space at observation ' + str(i + 1), fontweight='bold')
         for o in range(y_ds.shape[0]):
             ax5.plot(xtruth, y_ds[o,:])
-        ax5.set_aspect('equal')
+            ax5.set_aspect('equal')
 
