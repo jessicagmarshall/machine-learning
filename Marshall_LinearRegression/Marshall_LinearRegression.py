@@ -105,14 +105,15 @@ for i in range(N):
         
         #plot data space by drawing random samples from bivariate normal
         x_ds = np.random.multivariate_normal(muN, SN, 10)
-        x = np.linspace(-1, 1, 100)
-        for l in range(10):
-            y_ds = x_ds[l, 0] + x*x_ds[l, 1]
-        fig4 = plt.figure()
-        ax4 = fig4.add_subplot(111)
-        ax4.set_xlabel('w0 value = -0.3')
-        ax4.set_ylabel('w1 value = 0.5')
-        ax4.set_title('Data space ' + str(l + 1), fontweight='bold')
-        ax4.plt()
-        
+        y_ds = np.zeros((10, 100))
+        for n in range(10):
+            y_ds[n] = x_ds[n, 0] + xtruth*x_ds[n, 1]
+        fig5 = plt.figure()
+        ax5 = fig5.add_subplot(111)
+        ax5.set_xlabel('w0 value = -0.3')
+        ax5.set_ylabel('w1 value = 0.5')
+        ax5.set_title('Data space at observation ' + str(i + 1), fontweight='bold')
+        for o in range(y_ds.shape[0]):
+            ax5.plot(xtruth, y_ds[o,:])
+        ax5.set_aspect('equal')
 
