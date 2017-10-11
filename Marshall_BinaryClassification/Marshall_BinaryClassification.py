@@ -38,8 +38,14 @@ pi0_estimate = np.zeros(N)
 for i in range(0, N):
     pi0_estimate[i] = (1/(i+1)) * sum(xn[0:i+1, 2])
     
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(111)
+ax1.set_xlabel('observations')
+ax1.set_ylabel('pi0 estimate')
+ax1.set_title('Max Likelihood Estimate of pi0, truth is 0.7', fontweight='bold')
 x = np.linspace(0, 1, N)
-plt.plot(x, pi0_estimate)
+ax1.plot(x, pi0_estimate)
+
 
 ##########################################
 #use equation 4.75 to estimate mu0
@@ -50,5 +56,36 @@ x1_temp = np.array([np.multiply(xn[:, 1], xn[:, 2])]).T
 x2_temp = np.concatenate([x0_temp, x1_temp],axis=1)
 
 mu0_estimate = (1/N0)*np.sum(x2_temp, axis=0)
+print('mu0 estimate =', mu0_estimate)
+print('mu0 ground truth =', [mu0, mu0])
 
 ##########################################
+#use equation 4.75 to estimate mu1
+N1 = sum((1 - xn[:, 2]))
+
+x0_temp = np.array([np.multiply(xn[:, 0], (1 - xn[:, 2]))]).T
+x1_temp = np.array([np.multiply(xn[:, 1], (1 - xn[:, 2]))]).T
+x2_temp = np.concatenate([x0_temp, x1_temp],axis=1)
+
+mu1_estimate = (1/N1)*np.sum(x2_temp, axis=0)
+print('mu1 estimate =', mu1_estimate)
+print('mu1 ground truth =', [mu1, mu1])
+
+##########################################
+#use equation 4.78 - 4.80 to estimate S
+S0_temp = 0
+S1_temp = 0
+
+for i in range(0, N):
+    if(xn[i, 2] == 1):       #if observation is in class 0
+        temp = np.array([xn[i, :2] - mu0_estimate]).T
+        S0_temp += temp.dot(temp.T)
+    if(xn[i, 2] == 0):       #if observation is in class 1
+        temp = np.array([xn[i, :2] - mu1_estimate]).T
+        S1_temp += temp.dot(temp.T)
+
+S0 = (1/N0) * S0_temp
+S1 = (1/N1) * S1_temp
+S = (N0/N) * S0 + (N1/N) * S1
+print('S estimate =', S)
+print('S truth =', np.identity(2))
