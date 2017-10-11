@@ -78,8 +78,9 @@ for i in range(N):
         #plot likelihood
         fig3 = plt.figure()
         ax3 = fig3.add_subplot(111)
-        x1 = np.linspace(1, -1, 101)
-        y1 = np.linspace(-1, 1, 101)
+        M = 111
+        x1 = np.linspace(1, -1, M)
+        y1 = np.linspace(-1, 1, M)
         surface = np.zeros((len(x1), len(x1)))
         for j in range(len(x1)):            #iterate through w0's
             w0 = y1[j]    

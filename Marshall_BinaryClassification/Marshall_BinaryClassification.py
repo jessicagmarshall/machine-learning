@@ -21,12 +21,12 @@ mu1 = -1
 sigma = 1                           #covariance is [1, 0; 0, 1]
 
 x0 = np.random.normal(mu0, sigma, (N0, 2))      #each datapoint is a row
-ones = np.ones((N0, 1))
-x0 = np.append(x0, ones, axis=1)               #targets in last column
+ones = np.ones((N0, 1))                         #class 0 has target 1
+x0 = np.append(x0, ones, axis=1)                #targets in last column
 
 x1 = np.random.normal(mu1, sigma, (N1, 2))
-zeros = np.zeros((N1, 1))
-x1 = np.append(x1, zeros, axis=1)                #targets in last column
+zeros = np.zeros((N1, 1))                       #class 1 has target 0
+x1 = np.append(x1, zeros, axis=1)               #targets in last column
 
 x2 = np.concatenate([x0, x1],axis=0)            #smush data together
 xn = np.random.permutation(x2)                  #shuffle order of datapoints
@@ -42,4 +42,13 @@ x = np.linspace(0, 1, N)
 plt.plot(x, pi0_estimate)
 
 ##########################################
-#use equation 4.75 
+#use equation 4.75 to estimate mu0
+N0 = sum(xn[:, 2])
+
+x0_temp = np.array([np.multiply(xn[:, 0], xn[:, 2])]).T
+x1_temp = np.array([np.multiply(xn[:, 1], xn[:, 2])]).T
+x2_temp = np.concatenate([x0_temp, x1_temp],axis=1)
+
+mu0_estimate = (1/N0)*np.sum(x2_temp, axis=0)
+
+##########################################
