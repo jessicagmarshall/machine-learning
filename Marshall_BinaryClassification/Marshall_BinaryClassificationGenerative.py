@@ -116,7 +116,9 @@ for i in range(Ntest):
     if PC0[i] > 0.5:
         prediction[i] = 1
 
-error = 1 - (np.sum(truth == prediction)/Ntest)
+correct = np.sum(truth == prediction)/Ntest
+print('percent correct = ', 100 * correct, '%')
+error = 1 - correct
 print('test error = ', 100 * error, '%')
 
 ##########################################
