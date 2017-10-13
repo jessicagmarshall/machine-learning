@@ -16,8 +16,8 @@ def sigmoid(x):
 
 ##########################################
 #constants
-N = 100                          #number of training datapoints
-Ntest = 50                       #number of testing datapoints
+N = 200                          #number of training datapoints
+Ntest = 100                       #number of testing datapoints
 pi0 = .7                         #probability of class 0
 N0 = int(N * pi0)                #number of datapoints from class 0
 N1 = int(N * (1 - pi0))
@@ -54,10 +54,10 @@ fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
 ax1.set_xlabel('observations')
 ax1.set_ylabel('pi0 estimate')
-ax1.set_title('Max Likelihood Estimate of pi0, truth is 0.7', fontweight='bold')
+ax1.set_title('Max Likelihood Estimate of pi0', fontweight='bold')
 x = np.linspace(0, 1, N)
 ax1.plot(x, pi0_estimate)
-
+ax1.plot(x, np.ones(len(x))*0.7)
 
 ##########################################
 #use equation 4.75 to estimate mu0
@@ -118,3 +118,25 @@ for i in range(Ntest):
 
 error = 1 - (np.sum(truth == prediction)/Ntest)
 print('test error = ', 100 * error, '%')
+
+##########################################
+#plot some things
+
+fig2 = plt.figure()
+ax2 = fig2.add_subplot(111)
+#ax2.set_xlabel('observations')
+#ax2.set_ylabel('pi0 estimate')
+ax2.set_title('Decision Surface', fontweight='bold')
+#ax2.plot(x, pi0_estimate)
+class0 = ax2.scatter(x0[:, 0], x0[:, 1], c = 'r', marker='.', label='Class 0')
+class1 = ax2.scatter(x1[:, 0], x1[:, 1], c = 'g', marker='.', label='Class 1')
+ax2.legend(handles=[class0, class1]) 
+
+xtest = np.linspace(-3.5, 3.5, Ntest)
+y = np.zeros(Ntest)
+
+for i in range(Ntest):
+    y[i] = ((-w[0]*xtest[i]) - w0)/w[1]
+ax2.plot(xtest, y)
+
+
