@@ -1,7 +1,6 @@
 #Jessica Marshall
 #ECE414 Machine Learning
 #Binary Classification
-#equations 4.73, 4.75, 4.78, 4.80
 
 ##########################################
 #import libraries
@@ -17,7 +16,7 @@ def sigmoid(x):
 ##########################################
 #constants
 N = 200                          #number of training datapoints
-Ntest = 100                       #number of testing datapoints
+Ntest = 200                       #number of testing datapoints
 pi0 = .7                         #probability of class 0
 N0 = int(N * pi0)                #number of datapoints from class 0
 N1 = int(N * (1 - pi0))
@@ -50,14 +49,14 @@ pi0_estimate = np.zeros(N)
 for i in range(0, N):
     pi0_estimate[i] = (1/(i+1)) * sum(xn[0:i+1, 2])
     
-fig1 = plt.figure()
-ax1 = fig1.add_subplot(111)
-ax1.set_xlabel('observations')
-ax1.set_ylabel('pi0 estimate')
-ax1.set_title('Max Likelihood Estimate of pi0', fontweight='bold')
-x = np.linspace(0, 1, N)
-ax1.plot(x, pi0_estimate)
-ax1.plot(x, np.ones(len(x))*0.7)
+#fig1 = plt.figure()
+#ax1 = fig1.add_subplot(111)
+#ax1.set_xlabel('observations')
+#ax1.set_ylabel('pi0 estimate')
+#ax1.set_title('Max Likelihood Estimate of pi0', fontweight='bold')
+#x = np.linspace(0, N-1, N)
+#ax1.plot(x, pi0_estimate)
+#ax1.plot(x, np.ones(len(x))*0.7)
 
 ##########################################
 #use equation 4.75 to estimate mu0
@@ -68,6 +67,11 @@ x1_temp = np.array([np.multiply(xn[:, 1], xn[:, 2])]).T
 x2_temp = np.concatenate([x0_temp, x1_temp],axis=1)
 
 mu0_estimate = (1/N0)*np.sum(x2_temp, axis=0)
+print('\n')
+print('##########################')
+print('GAUSSIAN GENERATIVE MODEL')
+print('##########################')
+print('\n')
 print('mu0 estimate =', mu0_estimate)
 print('mu0 ground truth =', [mu0, mu0], '\n')
 
@@ -83,6 +87,8 @@ mu1_estimate = (1/N1)*np.sum(x2_temp, axis=0)
 print('mu1 estimate =', mu1_estimate)
 print('mu1 ground truth =', [mu1, mu1], '\n')
 
+##########################################
+#GAUSSIAN GENERATIVE MODEL
 ##########################################
 #use equation 4.78 - 4.80 to estimate S
 S0_temp = 0
@@ -126,10 +132,7 @@ print('test error = ', 100 * error, '%')
 
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
-#ax2.set_xlabel('observations')
-#ax2.set_ylabel('pi0 estimate')
-ax2.set_title('Decision Surface', fontweight='bold')
-#ax2.plot(x, pi0_estimate)
+ax2.set_title('Decision Surface - Gaussian Generative Model', fontweight='bold')
 class0 = ax2.scatter(x0[:, 0], x0[:, 1], c = 'r', marker='.', label='Class 0')
 class1 = ax2.scatter(x1[:, 0], x1[:, 1], c = 'g', marker='.', label='Class 1')
 ax2.legend(handles=[class0, class1]) 
@@ -141,4 +144,103 @@ for i in range(Ntest):
     y[i] = ((-w[0]*xtest[i]) - w0)/w[1]
 ax2.plot(xtest, y)
 
+##########################################
+#LOGISTIC REGRESSION
+##########################################
+#built iota with basis functions 0, x, x^2
 
+#try a normed iota
+iota_col1 = np.array([np.ones(len(xn))]).T
+iota_col2 = np.array([np.linalg.norm(xn[:, 0:2], axis = 1)]).T
+iota_col3 = np.array(iota_col2 ** 2)
+iota_eg = np.concatenate((iota_col1, iota_col2, iota_col3), axis = 1)
+
+iota = xn[:, :2]
+##########################################
+#build yn, R and w_new for w_old initial
+
+tn = xn[:, 2]
+w_old = np.array([[0.5, 2.5]])      #initial w
+
+yn = np.zeros(N)
+R_vec = np.zeros(N)
+
+for i in range(0, N):
+    yn[i] = sigmoid(w_old.dot(iota[i]))
+    R_vec[i] = yn[i]*(1-yn[i])
+    
+R = R_vec*np.identity(N)
+w_new = w_old - ((np.linalg.inv(iota.T.dot(R).dot(iota))).dot(iota.T).dot(yn-tn))
+
+##########################################
+#using w_new, test accuracy of classifier on test data
+
+PC0_logreg = np.zeros(Ntest)
+prediction_logreg = np.zeros(Ntest)
+
+for i in range(Ntest):
+    PC0_logreg[i] =  sigmoid(w_new.dot(xntest[i, :2]))
+    if PC0_logreg[i] > 0.5:
+        prediction_logreg[i] = 1
+
+print('\n')
+print('###################')
+print('LOGISTIC REGRESSION')
+print('###################')
+print('\n')
+print('1st calculation of w_new:')
+print('\n')
+correct_logreg = np.sum(truth == prediction_logreg)/Ntest
+print('percent correct = ', 100 * correct_logreg, '%')
+error_logreg = 1 - correct_logreg
+print('test error = ', 100 * error_logreg, '%')
+
+##########################################
+#rebuild yn, R and w_new
+
+w_old = w_new      #initial w
+
+yn = np.zeros(N)
+R_vec = np.zeros(N)
+
+for i in range(0, N):
+    yn[i] = sigmoid(w_old.dot(iota[i]))
+    R_vec[i] = yn[i]*(1-yn[i])
+    
+R = R_vec*np.identity(N)
+w_new = w_old - ((np.linalg.inv(iota.T.dot(R).dot(iota))).dot(iota.T).dot(yn-tn))
+
+##########################################
+#using w_new, test accuracy of classifier on test data
+
+PC0_logreg2 = np.zeros(Ntest)
+prediction_logreg2 = np.zeros(Ntest)
+
+for i in range(Ntest):
+    PC0_logreg2[i] =  sigmoid(w_new.dot(xntest[i, :2]))
+    if PC0_logreg2[i] > 0.5:
+        prediction_logreg2[i] = 1
+
+print('\n')      
+print('2nd calculation of w_new:')
+print('\n')
+correct_logreg2 = np.sum(truth == prediction_logreg2)/Ntest
+print('percent correct = ', 100 * correct_logreg2, '%')
+error_logreg2 = 1 - correct_logreg2
+print('test error = ', 100 * error_logreg2, '%')
+
+##########################################
+#plot devision surface
+
+fig3 = plt.figure()
+ax3 = fig3.add_subplot(111)
+ax3.set_title('Decision Surface - Logistic Regression', fontweight='bold')
+class0 = ax3.scatter(x0[:, 0], x0[:, 1], c = 'r', marker='.', label='Class 0')
+class1 = ax3.scatter(x1[:, 0], x1[:, 1], c = 'g', marker='.', label='Class 1')
+ax3.legend(handles=[class0, class1]) 
+
+ytest = np.zeros(Ntest)
+
+for i in range(Ntest):
+    ytest[i] = (-w_new[0, 0]*xtest[i])/w_new[0, 1]
+ax3.plot(xtest, ytest)
