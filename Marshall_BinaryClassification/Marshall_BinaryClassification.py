@@ -230,7 +230,7 @@ error_logreg2 = 1 - correct_logreg2
 print('test error = ', 100 * error_logreg2, '%')
 
 ##########################################
-#plot devision surface
+#plot decision surface
 
 fig3 = plt.figure()
 ax3 = fig3.add_subplot(111)
